@@ -8,19 +8,19 @@ class CleanseTestCase(TestCase):
         for before, after in entries:
             after = before if after is None else after
             result = cleanse_html(before, **kwargs)
-            self.assertEqual(result, after, u"Cleaning '%s', expected '%s' but got '%s'" % (before, after, result))
+            self.assertEqual(result, after, "Cleaning '%s', expected '%s' but got '%s'" % (before, after, result))
 
     def test_01_cleanse(self):
 
         entries = [
-            (u'<p>&nbsp;</p>', u''),
-            (u'<p>           </p>', u''),
-            (u'<span style="font-weight: bold;">Something</span><p></p>',
-                u'<strong>Something</strong>'),
-            (u'<p>abc <span>def <em>ghi</em> jkl</span> mno</p>', None),
-            (u'<span style="font-style: italic;">Something</span><p></p>',
-                u'<em>Something</em>'),
-            (u'<p>abc<br />def</p>', u'<p>abc<br />def</p>'),
+            ('<p>&nbsp;</p>', ''),
+            ('<p>           </p>', ''),
+            ('<span style="font-weight: bold;">Something</span><p></p>',
+                '<strong>Something</strong>'),
+            ('<p>abc <span>def <em>ghi</em> jkl</span> mno</p>', None),
+            ('<span style="font-style: italic;">Something</span><p></p>',
+                '<em>Something</em>'),
+            ('<p>abc<br />def</p>', '<p>abc<br />def</p>'),
             ]
 
         self.run_tests(entries)
@@ -56,7 +56,7 @@ class CleanseTestCase(TestCase):
 
     def test_05_p_in_p(self):
         entries = (
-                   (u'<p><p><p>&nbsp;</p> </p><p><br /></p></p>', u' '),
+                   ('<p><p><p>&nbsp;</p> </p><p><br /></p></p>', ' '),
 #                   ('<p>foo<p>bar</p>baz</p>', '<p>foo bar baz</p>'),
                   )
 
@@ -64,8 +64,8 @@ class CleanseTestCase(TestCase):
 
     def test_06_whitelist(self):
         entries = (
-                   (u'<script src="http://abc">foo</script>', u''),
-                   (u'<script type="text/javascript">foo</script>', u''),
+                   ('<script src="http://abc">foo</script>', ''),
+                   ('<script type="text/javascript">foo</script>', ''),
                   )
 
         self.run_tests(entries)
@@ -98,14 +98,14 @@ class CleanseTestCase(TestCase):
 
     def test_only_whitespace_elements(self):
         entries_no_strip = (
-                   (u'<table><tbody><tr><td>One</td><td> </td></tr><tr><td>Two</td><td>Three</td></tr></tbody></table>', None),
-                   (u'<table><tbody><tr><td>One</td><td>&#160;</td></tr><tr><td>Two</td><td>Three</td></tr></tbody></table>', None),
+                   ('<table><tbody><tr><td>One</td><td> </td></tr><tr><td>Two</td><td>Three</td></tr></tbody></table>', None),
+                   ('<table><tbody><tr><td>One</td><td>&#160;</td></tr><tr><td>Two</td><td>Three</td></tr></tbody></table>', None),
                   )
         entries_strip = (
-                   (u'<table><tbody><tr><td>One</td><td> </td></tr><tr><td>Two</td><td>Three</td></tr></tbody></table>',
-                    u'<table><tbody><tr><td>One</td></tr><tr><td>Two</td><td>Three</td></tr></tbody></table>'),
-                   (u'<table><tbody><tr><td>One</td><td>&#160;</td></tr><tr><td>Two</td><td>Three</td></tr></tbody></table>',
-                    u'<table><tbody><tr><td>One</td></tr><tr><td>Two</td><td>Three</td></tr></tbody></table>'),
+                   ('<table><tbody><tr><td>One</td><td> </td></tr><tr><td>Two</td><td>Three</td></tr></tbody></table>',
+                    '<table><tbody><tr><td>One</td></tr><tr><td>Two</td><td>Three</td></tr></tbody></table>'),
+                   ('<table><tbody><tr><td>One</td><td>&#160;</td></tr><tr><td>Two</td><td>Three</td></tr></tbody></table>',
+                    '<table><tbody><tr><td>One</td></tr><tr><td>Two</td><td>Three</td></tr></tbody></table>'),
                   )
 
         allowed_tags = { 'table': (), 'tbody': (), 'tr': (), 'td': (), }

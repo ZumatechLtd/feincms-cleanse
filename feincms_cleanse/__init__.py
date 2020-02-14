@@ -41,7 +41,7 @@ def _validate_href(href):
 
 def _all_allowed_attrs(allowed_tags):
     all_allowed_attrs = set()
-    for attr_seq in allowed_tags.values():
+    for attr_seq in list(allowed_tags.values()):
         all_allowed_attrs.update(attr_seq)
     return all_allowed_attrs
 
@@ -61,14 +61,14 @@ def cleanse_html(html,
 
     doc = lxml.html.fromstring('<anything>%s</anything>' % html)
     try:
-        lxml.html.tostring(doc, encoding=unicode)
+        lxml.html.tostring(doc, encoding=str)
     except UnicodeDecodeError:
         # fall back to slower BeautifulSoup if parsing failed
         from lxml.html import soupparser
-        doc = soupparser.fromstring(u'<anything>%s</anything>' % html)
+        doc = soupparser.fromstring('<anything>%s</anything>' % html)
 
     cleaner = lxml.html.clean.Cleaner(
-        allow_tags=allowed_tags.keys() + ['style', 'anything'],
+        allow_tags=list(allowed_tags.keys()) + ['style', 'anything'],
         remove_unknown_tags=False, # preserve surrounding 'anything' tag
         style=False, safe_attrs_only=False, # do not strip out style
                                             # attributes; we still need
@@ -106,7 +106,7 @@ def cleanse_html(html,
 
         # remove all attributes which are not explicitly allowed
         allowed = allowed_tags.get(element.tag, [])
-        for key in element.attrib.keys():
+        for key in list(element.attrib.keys()):
             if key not in allowed:
                 del element.attrib[key]
 
@@ -120,7 +120,7 @@ def cleanse_html(html,
     safe_attrs = set(lxml.html.defs.safe_attrs)
     safe_attrs.update(_all_allowed_attrs(allowed_tags))
     cleaner = lxml.html.clean.Cleaner(
-        allow_tags=allowed_tags.keys() + ['anything'],
+        allow_tags=list(allowed_tags.keys()) + ['anything'],
         remove_unknown_tags=False, # preserve surrounding 'anything' tag
         style=False, safe_attrs_only=True, safe_attrs=safe_attrs
         )
@@ -148,9 +148,9 @@ def cleanse_html(html,
 
     # merge tags
     for tag in merge_tags:
-        merge_str = u'\s*</%s>\s*<%s>\s*' % (tag, tag)
+        merge_str = '\s*</%s>\s*<%s>\s*' % (tag, tag)
         while True:
-            new = re.sub(merge_str, u' ', html)
+            new = re.sub(merge_str, ' ', html)
             if new == html:
                 break
             html = new

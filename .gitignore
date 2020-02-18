@@ -12,3 +12,5 @@
 /dist
 *.bak
 .idea
+.eggs
+feincms_cleanse.egg-info

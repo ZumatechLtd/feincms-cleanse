@@ -3,9 +3,8 @@
 from distutils.core import setup
 import re
 import os
-import setuplib
+from setuptools import setup, find_packages
 
-packages, package_data = setuplib.find_packages('feincms_cleanse')
 
 def get_version(package):
     """
@@ -14,17 +13,19 @@ def get_version(package):
     init_py = open(os.path.join(package, '__init__.py')).read()
     return re.search("^__version__ = ['\"]([^'\"]+)['\"]", init_py, re.MULTILINE).group(1)
 
-setup(name='feincms-cleanse',
+setup(
+    name='feincms-cleanse',
     version=get_version('feincms_cleanse'),
     description='Default HTML cleansing in FeinCMS',
-    long_description=open(os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
+    long_description=open(
+        os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
     author='Matthias Kestenholz',
     author_email='mk@feinheit.ch',
     url='http://github.com/feincms/feincms-cleanse/',
     license='BSD License',
     platforms=['OS Independent'],
-    packages=packages,
-    package_data=package_data,
+    packages=find_packages(),
+    include_package_data=True,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
@@ -36,4 +37,6 @@ setup(name='feincms-cleanse',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Software Development',
     ],
+    install_requires=('lxml>=3', 'beautifulsoup4'),
+    test_suite='feincms_cleanse.tests',
 )
